@@ -68,4 +68,12 @@ public class Game implements Runnable {
 
         stop();
     }
+
+    private void tick(){
+
+    }
+
+    private void render(){
+
+    }
 }
