@@ -2,8 +2,8 @@ package com.game.main;
 
 public class Game implements Runnable {
     // Game constants
-    private static final int MILLIS_PER_SECOND = 1000;
-    private static final int NANOS_PER_SECOND = 1000000;
+    private static final int MILLIS_PER_SECOND = Math.toIntExact(1000L);
+    private static final int NANOS_PER_SECOND = Math.toIntExact(1000000000L);
     private static final double NUM_TICKS = 60.0; // The number of game updates per second
 
     // Game variables
@@ -22,9 +22,10 @@ public class Game implements Runnable {
     }
 
     private synchronized void start(){
+        if (running) return;
+        running = true;
         gameThread = new Thread(this);
         gameThread.start();
-        running = true;
     }
 
     private synchronized void stop() {
@@ -58,6 +59,7 @@ public class Game implements Runnable {
             }
             if (running) {
                 render();
+                frames++;
             }
 
             if (System.currentTimeMillis() - timer > MILLIS_PER_SECOND) {
@@ -69,10 +71,12 @@ public class Game implements Runnable {
         stop();
     }
 
+    // updating game state
     private void tick(){
 
     }
 
+    // generating UI
     private void render(){
 
     }
