@@ -29,27 +29,26 @@ public class Game implements Runnable {
     }
 
     private synchronized void stop() {
-        try {
-            gameThread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         running = false;
+        if (gameThread != null && gameThread != Thread.currentThread()) {
+            try  {
+                gameThread.join();
+            } catch (InterruptedException e) {}
+        }
     }
 
     @Override
     public void run() {
         long lastTime = System.nanoTime();
-        double amountOfTicks = NUM_TICKS;
-        double ns = NANOS_PER_SECOND / amountOfTicks;
-        double delta = 0;
+        double nsPerTick = (double) NANOS_PER_SECOND / NUM_TICKS;
+        double delta = 0.0;
         long timer = System.currentTimeMillis();
         int frames = 0;
         int updates = 0;
 
         while (running) {
             long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
+            delta += (now - lastTime) / nsPerTick;
             lastTime = now;
 
             while (delta >= 1) {
@@ -65,6 +64,8 @@ public class Game implements Runnable {
             if (System.currentTimeMillis() - timer > MILLIS_PER_SECOND) {
                 timer += MILLIS_PER_SECOND;
                 System.out.println("FPS: " + frames + " TPS: " +  updates);
+                frames = 0;
+                updates = 0;
             }
         }
 
